@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet, Pressable, ImageBackground, TouchableOpacity, TextInput,} from 'react-native';
+import { View, Text, Button, StyleSheet, Pressable, ImageBackground, TouchableOpacity, TextInput, KeyboardAvoidingView} from 'react-native';
 
 // Importing the default background image from the assets folder
 import BackgroundImage from "../assets/Background_Image.png";
@@ -92,6 +92,7 @@ export default class Start extends React.Component {
             </Pressable>
           </View>
         </ImageBackground>
+        {Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
       </View>
     );
   }
@@ -105,16 +106,17 @@ const styles = StyleSheet.create({
 
   backgroundImage: {
     flex: 1,
+    flexDirection: 'column',
     width: "100%",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-evenly",
   },
 
   titleBox: {
     height: "40%",
     width: "88%",
     alignItems: "center",
-    paddingTop: 100,
+    paddingTop: 50,
   },
 
   title: {
@@ -125,9 +127,9 @@ const styles = StyleSheet.create({
 
   box1: {
     backgroundColor: "#FFFFFF",
-    height: "46%",
+    height: "44%",
     width: "88%",
-    justifyContent: "space-around",
+    justifyContent: "space-evenly",
     alignItems: "center",
   },
 
@@ -136,7 +138,7 @@ const styles = StyleSheet.create({
     borderRadius: 1,
     borderColor: "grey",
     width: "88%",
-    height: 60,
+    height: 50,
     paddingLeft: 20,
     flexDirection: "row",
     alignItems: "center",
@@ -170,8 +172,8 @@ const styles = StyleSheet.create({
 
   colorArray: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    width: "80%",
+    justifyContent: "space-evenly",
+    width: "88%",
   },
 
   color1: {
@@ -204,7 +206,7 @@ const styles = StyleSheet.create({
 
   button: {
     width: "88%",
-    height: 70,
+    height: 50,
     borderRadius: 8,
     backgroundColor: "#757083",
     alignItems: "center",
