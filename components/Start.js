@@ -1,221 +1,194 @@
-import React from 'react';
-import { View, Text, Button, StyleSheet, Pressable, ImageBackground, TouchableOpacity, TextInput, KeyboardAvoidingView} from 'react-native';
+import React, { Component } from "react";
+import {
+  ImageBackground,
+  Image,
+  Text,
+  TextInput,
+  View,
+  StyleSheet,
+  Button,
+  TouchableOpacity,
+} from "react-native";
 
-// Importing the default background image from the assets folder
 import BackgroundImage from "../assets/Background_Image.png";
 
-
-export default class Start extends React.Component {
+export default class Start extends Component {
+  //setting state for name and backgroundcolor
   constructor(props) {
     super(props);
-
-    this.state = {
-      name: "",
-      bgColor: this.colors.pink,
-    };
+    this.state = { name: "", bgColor: this.colors.dark };
   }
 
-  // function to update the state with the new background color for Chat Screen chosen by the user
+  // function to setState to change the backgroundcolor on user select of background
   changeBgColor = (newColor) => {
     this.setState({ bgColor: newColor });
   };
-  // backgroud colors to choose
+
+  // background colors the user can select
   colors = {
-    black: "#090C08",
+    dark: "#090C08",
     purple: "#474056",
-    grey: "#8A95A5",
+    blue: "#8A95A5",
     green: "#B9C6AE",
-    blue: "#1B70A0",
   };
+
+  //function that will invoke the setState of text
+  // This will handle the input of the user
 
   render() {
     return (
-      // Components to create the color arrays, titles and the app's colors
-      <View style={styles.container}>
-        <ImageBackground
-          source={BackgroundImage}
-          resizeMode="cover"
-          style={styles.backgroundImage}
-        >
-          <View style={styles.titleBox}>
-            <Text style={styles.title}>Chat App</Text>
+      <ImageBackground
+        source={BackgroundImage}
+        style={styles.container}
+        resize="cover"
+      >
+        <Text style={styles.title}>ChatApp</Text>
+        <View style={styles.wrapper}>
+          <View >
+            {/* <Image source={require("./icon.png")} style={styles.image} /> */}
+            <TextInput
+              // value assign from the state text
+              value={this.state.name}
+              //onChangeText react native event handler, uses change of input from user
+              onChangeText={(name) => this.setState({ name })}
+              style={styles.input}
+              placeholder="Your Name"
+              accessible={true}
+              accessibilityLabel="your name"
+              accessibilityHint="Type the name you want to use in the chat session."
+            />
           </View>
-
-          <View style={styles.box1}>
-            <View style={styles.inputBox}>
-              <TextInput
-                style={styles.input}
-                onChangeText={(text) => this.setState({ name: text })}
-                value={this.state.name}
-                placeholder="Enter your name"
-              />
-            </View>
-
-            <View style={styles.colorBox}>
-              <Text style={styles.chooseColor}>
-                {" "}
-                Pick your background color!{" "}
-              </Text>
-            </View>
-
-            {/* All the colors to change the background are here! */}
-            <View style={styles.colorArray}>
-              <TouchableOpacity
-                style={styles.color1}
-                onPress={() => this.changeBgColor(this.colors.black)}
-              ></TouchableOpacity>
-              <TouchableOpacity
-                style={styles.color2}
-                onPress={() => this.changeBgColor(this.colors.purple)}
-              ></TouchableOpacity>
-              <TouchableOpacity
-                style={styles.color3}
-                onPress={() => this.changeBgColor(this.colors.grey)}
-              ></TouchableOpacity>
-              <TouchableOpacity
-                style={styles.color4}
-                onPress={() => this.changeBgColor(this.colors.green)}
-              ></TouchableOpacity>
-            </View>
-
-            {/*This will allow the user to click on a button and be redirected to the chat page */}
-            <Pressable
-              style={styles.button}
-              onPress={() =>
-                this.props.navigation.navigate("Chat", {
-                  name: this.state.name,
-                  bgColor: this.state.bgColor,
-                })
-              }
-            >
-           <Text style={styles.buttonText}>Start Chatting</Text>
-            </Pressable>
+          <Text style={styles.text}>Choose Background Color</Text>
+          <View style={styles.colorwrapper}>
+            <TouchableOpacity
+            
+              style={styles.circle1}
+              onPress={() => this.changeBgColor(this.colors.dark)}
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel="Very dark (mostly black) green violet background color"
+              accessibilityHint="Adds very dark (mostly black) green background color to the chat screen."
+              
+              
+            ></TouchableOpacity>
+            <TouchableOpacity
+              style={styles.circle2}
+              onPress={() => this.changeBgColor(this.colors.purple)}
+              accessibilityRole="button"
+              accessibilityLabel="Very dark grayish violet background color"
+              accessibilityHint="Adds very dark grayish violet  background color to the chat screen."
+            ></TouchableOpacity>
+            <TouchableOpacity
+              style={styles.circle3}
+              onPress={() => this.changeBgColor(this.colors.blue)}
+              accessibilityRole="button"
+              accessibilityLabel=" Dark grayish blue background color"
+              accessibilityHint="Adds  dark grayish blue background color to the chat screen."
+              accessible={true}
+             
+            ></TouchableOpacity>
+            <TouchableOpacity
+              style={styles.circle4}
+              onPress={() => this.changeBgColor(this.colors.green)}
+               accessibilityRole="button"
+              accessibilityLabel="Grayish green background color"
+              accessibilityHint="Adds grayish green background color to the chat screen."
+            ></TouchableOpacity>
           </View>
-        </ImageBackground>
-        {Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
-      </View>
+          <Button
+            title="Start Chatting"
+            color="#757083"
+            style={styles.button}
+            //onPress react native event handler, user presses on something
+            // here the pressing of the button will navigate to the different (screen) component called "Chat"
+            onPress={() =>
+              this.props.navigation.navigate("Chat", {
+                name: this.state.name,
+                bgColor: this.state.bgColor,
+              })
+            }
+          />
+        </View>
+      </ImageBackground>
     );
   }
 }
 
-// Creating the app's stylesheet, fixing sizes, centering items, changing colors
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-
-  backgroundImage: {
-    flex: 1,
-    flexDirection: 'column',
-    width: "100%",
+    justifyContent: "center",
     alignItems: "center",
-    justifyContent: "space-evenly",
   },
-
-  titleBox: {
-    height: "40%",
+  // image:{
+  // height:2,
+  // },
+ 
+  wrapper: {
+    backgroundColor: "white",
     width: "88%",
-    alignItems: "center",
-    paddingTop: 50,
+    height: "44%",
+    padding: 20,
+   marginBottom:300
   },
-
-  title: {
-    fontSize: 45,
+  button: {
+    height: 50,
+    marginTop: 30,
+    fontSize: 16,
     fontWeight: "600",
     color: "#FFFFFF",
   },
-
-  box1: {
-    backgroundColor: "#FFFFFF",
-    height: "44%",
-    width: "88%",
-    justifyContent: "space-evenly",
-    alignItems: "center",
-  },
-
-  inputBox: {
-    borderWidth: 2,
-    borderRadius: 1,
-    borderColor: "grey",
-    width: "88%",
-    height: 50,
-    paddingLeft: 20,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-
-  image: {
-    width: 20,
-    height: 20,
-    marginRight: 10,
-  },
-
   input: {
+    paddingLeft: 20,
+    height: 40,
+    borderColor: "grey",
+    borderWidth: 1,
     fontSize: 16,
     fontWeight: "300",
     color: "#757083",
     opacity: 0.5,
+    marginBottom: 30,
   },
-
-  colorBox: {
-    marginRight: "auto",
-    paddingLeft: 15,
-    width: "88%",
-  },
-
-  chooseColor: {
-    fontSize: 16,
-    fontWeight: "300",
-    color: "#757083",
-    opacity: 100,
-  },
-
-  colorArray: {
-    flexDirection: "row",
-    justifyContent: "space-evenly",
-    width: "88%",
-  },
-
-  color1: {
-    backgroundColor: "#090C08",
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-  },
-
-  color2: {
-    backgroundColor: "#474056",
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-  },
-
-  color3: {
-    backgroundColor: "#8A95A5",
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-  },
-
-  color4: {
-    backgroundColor: "#B9C6AE",
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-  },
-
-  button: {
-    width: "88%",
-    height: 50,
-    borderRadius: 8,
-    backgroundColor: "#757083",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  buttonText: {
+  title: {
+    marginTop: 20,
     color: "#FFFFFF",
+    fontSize: 45,
+    lineHeight: 600,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  text: {
     fontSize: 16,
-    fontWeight: "600",
+    textAlign:'center',
+  },
+  colorwrapper: { flex: 1, flexDirection: "row", marginTop: 10 ,justifyContent: 'space-evenly'},
+
+  circle1: {
+    backgroundColor: "#090C08",
+    borderRadius: 25,
+    width: 30,
+    height: 30,
+ 
+  },
+  circle2: {
+    backgroundColor: "#474056",
+    borderRadius: 25,
+    width: 30,
+    height: 30,
+   
+  },
+  circle3: {
+    backgroundColor: "#8A95A5",
+    borderRadius: 25,
+    width: 30,
+    height: 30,
+   
+  },
+  circle4: {
+    backgroundColor: "#B9C6AE",
+    borderRadius: 25,
+    width: 30,
+    height: 30,
+  
   },
 });
