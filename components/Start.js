@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Button,
   TouchableOpacity,
+  KeyboardAvoidingView
 } from "react-native";
 
 import BackgroundImage from "../assets/Background_Image.png";
@@ -108,7 +109,9 @@ export default class Start extends Component {
               })
             }
           />
+          
         </View>
+        { Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null}
       </ImageBackground>
     );
   }
@@ -120,10 +123,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  // image:{
-  // height:2,
-  // },
- 
+
   wrapper: {
     backgroundColor: "white",
     width: "88%",
