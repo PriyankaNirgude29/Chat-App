@@ -1,80 +1,133 @@
-import React from 'react';
-import { View, KeyboardAvoidingView} from 'react-native';
+import React,{ useState, useEffect, useCallback }  from 'react';
+import { View, KeyboardAvoidingView, StyleSheet } from 'react-native';
 import { GiftedChat,Bubble } from 'react-native-gifted-chat';
+import { collection, onSnapshot, addDoc, query, orderBy } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 
 
-export default class Chat extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      messages: [],
-    }
-  }
-  componentDidMount() {
-    this.setState({
-      messages: [
-        {
-          _id: 1,
-          text: 'Hello developer',
-          createdAt: new Date(),
-          user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://placeimg.com/140/140/any',
-          },
-        },
-        {
-          _id: 2,
-          text: 'This is a system message',
-          createdAt: new Date(),
-          system: true,
-         },
-      ],
-    })
-  }
+import { auth, db } from '../firebase/firebase-config';
 
-  onSend(messages = []) {
-    this.setState(previousState => ({
-      messages: GiftedChat.append(previousState.messages, messages),
-    }))
-  }
-
-  renderBubble(props) {
-    return (
-      <Bubble
-        {...props}
-        wrapperStyle={{
-          right: {
-            backgroundColor: '#000'
-          }
-        }}
-      />
-    )
-  }
-
-  render() {
-    let name = this.props.route.params.name;
-    this.props.navigation.setOptions({ title: name });
-
-    let { bgColor } = this.props.route.params;
-   
-    return (
-        <View style={{flex: 1,backgroundColor: bgColor}}>
-
-        <GiftedChat
-             renderBubble={this.renderBubble.bind(this)}
-             messages={this.state.messages}
-             onSend={messages => this.onSend(messages)}
-             user={{
-                  _id: 1,
-                }}
-         />
-         { Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null
- }
-        </View>
-        
-    
+export default function Chat (props){
+ 
+  // Set the title of the page and give's a name to it
+  props.navigation.setOptions({ headerShown: true})
+  props.navigation.setOptions({ title: props.route.params.name + '\'s chat' });
+  
+  //State
+  const {name, color} = props.route.params;
+  const [messages, setMessages] = useState([]);
       
-    )
-  }
+  // Fetch collection and query on it
+  const messagesCollection = collection(db, 'messages');
+  
+  //Run once after component mount         
+  useEffect(() => {
+                      // Fetch collection and query on it
+                      const messagesQuery = query(messagesCollection, orderBy("createdAt", "desc"));
+
+                      const stopListeningToSnapshots = onSnapshot(messagesQuery, getDatabaseMessages)
+                        
+                          //In here code will run once the component will unmount
+                          return () => {
+                            stopListeningToSnapshots();                                     
+                          }
+
+                    
+  },[])
+
+// WORKING WITH FIREBASE
+
+//Use addDoc() to add another document to the collection
+const addMessage = (message) => {
+                              addDoc(messagesCollection, 
+                                {
+                                  _id: message._id,
+                                  text: message.text || '',
+                                  createdAt: message.createdAt,
+                                  user: message.user
+                                });
 }
+
+  //Fecth messages from DB and setState
+  const getDatabaseMessages = (data) => {
+                                    let array = [];
+                                    data.docs.map(doc => (
+                                    array.push({
+                                                    '_id': doc.data()._id,
+                                                    'createdAt': doc.data().createdAt.toDate(),
+                                                    'text': doc.data().text,
+                                                    'user': doc.data().user
+                                                })
+                                    ))
+                                    console.log('Array', array);
+                                    setMessages(array)
+                              
+  }
+
+  //Append message to the State and call addMessage()
+  const sendMessageToDatabase = (messages = []) => {
+                                    const [messageToSend] = messages;
+                                    setMessages(previousMessages => GiftedChat.append(previousMessages, [messageToSend]))
+                                    //Last message appended
+                                    addMessage(messages[0]);
+  }
+
+ // Customize the color of the sender bubble
+ const renderBubble = (props) => {
+                                return (
+                                  <Bubble {...props}
+                                    textStyle={{
+                                    right: {
+                                      color: 'black',
+                                    },
+                                    left: {
+                                      color: 'white',
+                                    }
+                                    }}
+                                    wrapperStyle={{
+                                    left: {
+                                      backgroundColor: 'teal',
+                                      padding: 7
+                                    },
+                                    right: {
+                                      backgroundColor: 'darkorange',
+                                      padding: 7
+                                    }
+                                    }}
+                                  />
+                                  );
+  }
+
+  return (
+              <View style={{flex: 1, backgroundColor: color }}>
+              <GiftedChat
+                  renderBubble={renderBubble}
+                  messages={messages}
+                  onSend={message => sendMessageToDatabase(message)}
+                  user={
+                    {
+                    _id: 1,
+                    name: name,
+                    avatar: 'https://placeimg.com/140/140/any'
+                  }
+                  }
+              />
+              {Platform.OS === 'android' ? <KeyboardAvoidingView behavior='height'/> : null}
+            </View> 
+  )
+}
+
+const styles = StyleSheet.create({
+text: {
+margin: 'auto',
+  color: '#757083',
+  fontSize: 16,
+  fontWeight: 300,
+  textAlign: 'center',
+  color: 'white'
+},
+offline: {
+  flex: 0.6,
+  justifyContent: 'center'
+},
+});
