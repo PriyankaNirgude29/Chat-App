@@ -2,17 +2,10 @@ import React,{ useState, useEffect, useCallback }  from 'react';
 import { View, KeyboardAvoidingView, StyleSheet } from 'react-native';
 import { GiftedChat,Bubble } from 'react-native-gifted-chat';
 import { collection, onSnapshot, addDoc, query, orderBy } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
-
-
 import { auth, db } from '../firebase/firebase-config';
 
 export default function Chat (props){
  
-  // Set the title of the page and give's a name to it
-  props.navigation.setOptions({ headerShown: true})
-  props.navigation.setOptions({ title: props.route.params.name + '\'s chat' });
-  
   //State
   const {name, color} = props.route.params;
   const [messages, setMessages] = useState([]);
@@ -22,16 +15,24 @@ export default function Chat (props){
   
   //Run once after component mount         
   useEffect(() => {
+                      // Set the title of the page and give's a name to it
+  
+  
+                        props.navigation.setOptions({ headerShown: true})
+                        props.navigation.setOptions({ title: props.route.params.name + '\'s chat' });
+                        
+                       // Create variable to hold unsubsriber
+                        let unsubscribe;
+  
+  
                       // Fetch collection and query on it
                       const messagesQuery = query(messagesCollection, orderBy("createdAt", "desc"));
 
-                      const stopListeningToSnapshots = onSnapshot(messagesQuery, getDatabaseMessages)
+                       // onSnapshot returns an unsubscriber, listening for updates to the messages collection
+                      unsubscribe = onSnapshot(messagesQuery, getDatabaseMessages);
                         
                           //In here code will run once the component will unmount
-                          return () => {
-                            stopListeningToSnapshots();                                     
-                          }
-
+                          return () => unsubscribe();
                     
   },[])
 
@@ -49,28 +50,24 @@ const addMessage = (message) => {
 }
 
   //Fecth messages from DB and setState
-  const getDatabaseMessages = (data) => {
-                                    let array = [];
-                                    data.docs.map(doc => (
-                                    array.push({
-                                                    '_id': doc.data()._id,
-                                                    'createdAt': doc.data().createdAt.toDate(),
-                                                    'text': doc.data().text,
-                                                    'user': doc.data().user
-                                                })
-                                    ))
-                                    console.log('Array', array);
-                                    setMessages(array)
+  const getDatabaseMessages = (querySnapshot) => {
+    setMessages(
+      querySnapshot.docs.map(doc => ({
+          _id: doc.data()._id,
+          createdAt: doc.data().createdAt.toDate(),
+          text: doc.data().text || '',
+          user: doc.data().user,
+      }))
+  )           
                               
   }
 
   //Append message to the State and call addMessage()
-  const sendMessageToDatabase = (messages = []) => {
-                                    const [messageToSend] = messages;
-                                    setMessages(previousMessages => GiftedChat.append(previousMessages, [messageToSend]))
-                                    //Last message appended
-                                    addMessage(messages[0]);
-  }
+  const sendMessageToDatabase = useCallback((messages = []) => {
+    setMessages(previousMessages => GiftedChat.append(previousMessages, messages));
+    addMessage(messages[0]);
+}, [])
+
 
  // Customize the color of the sender bubble
  const renderBubble = (props) => {
@@ -103,7 +100,7 @@ const addMessage = (message) => {
               <GiftedChat
                   renderBubble={renderBubble}
                   messages={messages}
-                  onSend={message => sendMessageToDatabase(message)}
+                  onSend={messages => sendMessageToDatabase(messages)}
                   user={
                     {
                     _id: 1,

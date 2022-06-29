@@ -19,7 +19,7 @@ export default function Start (props) {
       <View style={styles.container}>
           <ImageBackground source={BackgroundImage} resizeMode="cover" style={styles.background_image}>
               <View style={styles.header}>
-                    <Text style={styles.title}>Chatty</Text>
+                    <Text style={styles.title}>Chat-App</Text>
               </View>
               
 			        {/* Main View */}
