@@ -5,6 +5,8 @@ import { collection, onSnapshot, addDoc, query, orderBy } from "firebase/firesto
 import { auth, db } from '../firebase/firebase-config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
+import CustomActions from "./CustomActions";
+import MapView from 'react-native-maps';
 
 export default function Chat (props){
  
@@ -108,7 +110,9 @@ const addMessage = (message) => {
                                   _id: message._id,
                                   text: message.text || '',
                                   createdAt: message.createdAt,
-                                  user: message.user
+                                  user: message.user,
+                                  image: message.image || null,
+                                  location: message.location || null,
                                 });
 }
 
@@ -120,6 +124,8 @@ const addMessage = (message) => {
           createdAt: doc.data().createdAt.toDate(),
           text: doc.data().text || '',
           user: doc.data().user,
+          image: doc.data().image || null,
+          location: doc.data().location || null,
       }))
   )           
                               
@@ -174,11 +180,37 @@ const addMessage = (message) => {
         );
     }
 }
+
+// Render the CustomActions component next to input bar to let user send images and geolocation
+const renderCustomActions = (props) => {
+  return <CustomActions {...props} />;
+};
+
+// Render Custom View to display map when user shares geolocation
+const renderCustomView = (props) => {
+  const currentMessage = props;
+  if (currentMessage.location) {
+      return (
+          <MapView
+              style={styles.map}
+              region={{
+                  latitude: currentMessage.location.coords.latitude,
+                  longitude: currentMessage.location.coords.longitude,
+                  latitudeDelta: 0.0922,
+                  longitudeDelta: 0.0421,
+              }}
+          />
+      );
+  }
+  return null;
+}
   return (
               <View style={{flex: 1, backgroundColor: color }}>
               <GiftedChat
                   renderBubble={renderBubble}
                   renderInputToolbar={renderInputToolbar.bind()}
+                  renderActions={renderCustomActions}
+                  renderCustomView={renderCustomView}
                   messages={messages}
                   onSend={messages => sendMessageToDatabase(messages)}
                   user={
