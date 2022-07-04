@@ -223,16 +223,3 @@ const styles = StyleSheet.create({
 CustomActions.contextTypes = {
     actionSheet: PropTypes.func,
 };
-
-CustomActions.defaultProps = {
-    onSend: () => {},
-    options: {},
-    containerStyle: {},
-    wrapperStyle: {},
-    iconTextStyle: {},
-  };
-  
-  CustomActions.propTypes = {
-    onSend: PropTypes.func,
-    options: PropTypes.object,
-  };
