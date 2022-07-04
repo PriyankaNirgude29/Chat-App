@@ -48,11 +48,11 @@ npm install npm@latest -g
 
 #### Set up Firebase
 
-Please refer to the ![documentation](https://firebase.google.com/).
+Please refer to the [documentation](https://firebase.google.com/).
 
 #### Set up Expo
 
-Go to the ![Expo sign up](https://expo.dev/) and follow the instructions to create an account. On your smartphone, go to your app store and download Expo app.
+Go to the [Expo sign up](https://expo.dev/) and follow the instructions to create an account. On your smartphone, go to your app store and download Expo app.
 
 #### Installation
 
