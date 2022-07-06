@@ -188,14 +188,14 @@ const renderCustomActions = (props) => {
 
 // Render Custom View to display map when user shares geolocation
 const renderCustomView = (props) => {
-  const currentMessage = props;
+  const { currentMessage } = props;
   if (currentMessage.location) {
       return (
           <MapView
               style={styles.map}
               region={{
-                  latitude: currentMessage.location.coords.latitude,
-                  longitude: currentMessage.location.coords.longitude,
+                  latitude: currentMessage.location.latitude,
+                  longitude: currentMessage.location.longitude,
                   latitudeDelta: 0.0922,
                   longitudeDelta: 0.0421,
               }}

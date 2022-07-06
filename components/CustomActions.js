@@ -107,21 +107,20 @@ export default class CustomActions extends React.Component {
     getLocation = async () => {
         // Ask user for permission to access current location
         try {
-        const { status } = await Location.requestForegroundPermissionsAsync();
+        const { status } = await Location.getForegroundPermissionsAsync();
 
       
             // If permission is granted, get the current location
             if (status === 'granted') {
                 console.log('Getting current position...');
-                const result = await Location.getCurrentPositionAsync({}).catch(err => console.log(err));
-                const longitude = JSON.stringify(result.coords.longitude);
-                const altitude = JSON.stringify(result.coords.latitude);
+                let result = await Location.getCurrentPositionAsync({}).catch(err => console.log(err));
                 // If the user doesn't cancel process, set current location to display in map view
                 if (result) {
                     this.props.onSend({ location: {
-                        longitude: result.coords.longitude,
-                        latitude: result.coords.latitude,
-                    } });
+                        longitude: result.longitude,
+                        latitude: result.latitude,
+                      },
+                     });
                     console.log('Location successfully set!')
                 }
             }
