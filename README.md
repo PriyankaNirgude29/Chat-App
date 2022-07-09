@@ -38,6 +38,8 @@ This app has beed developed as a part of careerfoundry fullstack web-development
 
 ![Alt text](./assets/Scrshot_Chat.png?raw=true&sanitize=true "Optional Title")
 
+![Alt text](./assets/ScrShot_GeoLocation.png?raw=true&sanitize=true "Optional Title")
+
 ## Getting Started
 
 Follow these steps if you want to clone the project and build upon it yourself.
