@@ -117,8 +117,8 @@ export default class CustomActions extends React.Component {
                 // If the user doesn't cancel process, set current location to display in map view
                 if (result) {
                     this.props.onSend({ location: {
-                        longitude: result.longitude,
-                        latitude: result.latitude,
+                        longitude: result.coords.longitude,
+                        latitude: result.coords.latitude,
                       },
                      });
                     console.log('Location successfully set!')

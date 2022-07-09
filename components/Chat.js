@@ -192,7 +192,7 @@ const renderCustomView = (props) => {
   if (currentMessage.location) {
       return (
           <MapView
-              style={styles.map}
+            style={{ width: 150, height: 100, borderRadius: 13, margin: 3 }}
               region={{
                   latitude: currentMessage.location.latitude,
                   longitude: currentMessage.location.longitude,
