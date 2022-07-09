@@ -34,7 +34,7 @@ This app has beed developed as a part of careerfoundry fullstack web-development
 
 ![Alt text](./assets/scrShot_start.png?raw=true&sanitize=true "Optional Title")
 
-* Chat Screen with communition (image) functionality:
+* Chat Screen with communition (image, geo-location) functionality:
 
 ![Alt text](./assets/Scrshot_Chat.png?raw=true&sanitize=true "Optional Title")
 
